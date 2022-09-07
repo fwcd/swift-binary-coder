@@ -1,26 +1,21 @@
 import Foundation
 
+/// The internal state used by the encoders.
 class BinaryEncodingState {
-    private let endianness: Endianness
-    private let stringEncoding: String.Encoding
-    private var data: Data = Data()
+    private let config: BinaryCodingConfiguration
+    private(set) var data: Data = Data()
 
-    init(
-        endianness: Endianness,
-        stringEncoding: String.Encoding,
-        data: Data = .init()
-    ) {
-        self.endianness = endianness
-        self.stringEncoding = stringEncoding
+    init(config: BinaryCodingConfiguration, data: Data = .init()) {
+        self.config = config
         self.data = data
     }
 
     func encodeNil() throws {
-
+        // Skip nils
     }
 
     func encodeInteger<Integer>(_ value: Integer) where Integer: FixedWidthInteger {
-        withUnsafeBytes(of: endianness.apply(value)) { data += $0 }
+        withUnsafeBytes(of: config.endianness.apply(value)) { data += $0 }
     }
 
     func encode(_ value: Bool) throws {

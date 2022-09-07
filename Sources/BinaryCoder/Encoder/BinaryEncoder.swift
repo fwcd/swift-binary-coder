@@ -1,31 +1,17 @@
 import Foundation
 
-public struct BinaryEncoder: Encoder {
-    private let state: BinaryEncodingState
+/// An encoder that encodes Swift structures to a flat binary representation.
+public struct BinaryEncoder {
+    private let config: BinaryCodingConfiguration
 
-    public var codingPath: [CodingKey] { [] }
-    public var userInfo: [CodingUserInfoKey: Any] { [:] }
-
-    init(state: BinaryEncodingState) {
-        self.state = state
+    public init(config: BinaryCodingConfiguration = .init()) {
+        self.config = config
     }
 
-    init(
-        endianness: Endianness = .bigEndian,
-        stringEncoding: String.Encoding = .utf8
-    ) {
-        self.init(state: .init(endianness: endianness, stringEncoding: stringEncoding))
-    }
-
-    public func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
-        .init(KeyedBinaryEncodingContainer(state: state))
-    }
-
-    public func unkeyedContainer() -> UnkeyedEncodingContainer {
-        UnkeyedBinaryEncodingContainer(state: state)
-    }
-
-    public func singleValueContainer() -> SingleValueEncodingContainer {
-        SingleValueBinaryEncodingContainer(state: state)
+    /// Encodes a value to a flat binary representation.
+    public func encode<Value>(_ value: Value) throws -> Data where Value: Encodable {
+        let state = BinaryEncodingState(config: config)
+        try value.encode(to: BinaryEncoderImpl(state: state))
+        return state.data
     }
 }

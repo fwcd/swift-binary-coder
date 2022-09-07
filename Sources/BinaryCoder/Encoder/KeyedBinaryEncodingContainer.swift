@@ -16,11 +16,11 @@ struct KeyedBinaryEncodingContainer<Key>: KeyedEncodingContainerProtocol where K
     }
 
     mutating func superEncoder() -> Encoder {
-        BinaryEncoder(state: state)
+        BinaryEncoderImpl(state: state)
     }
 
     mutating func superEncoder(forKey key: Key) -> Encoder {
-        BinaryEncoder(state: state)
+        BinaryEncoderImpl(state: state)
     }
 
     mutating func encodeNil(forKey key: Key) throws { try state.encodeNil() }

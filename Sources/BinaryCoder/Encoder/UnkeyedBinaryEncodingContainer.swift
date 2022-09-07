@@ -17,7 +17,7 @@ struct UnkeyedBinaryEncodingContainer: UnkeyedEncodingContainer {
     }
 
     mutating func superEncoder() -> Encoder {
-        BinaryEncoder(state: state)
+        BinaryEncoderImpl(state: state)
     }
 
     mutating func encodeNil() throws { try state.encodeNil() }
