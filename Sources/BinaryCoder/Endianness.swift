@@ -1,3 +1,4 @@
+/// The byte order of a fixed-width integer.
 public enum Endianness {
     case bigEndian
     case littleEndian
