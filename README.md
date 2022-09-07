@@ -1,6 +1,6 @@
 # Binary Coder for Swift
 
-A simple `Encoder` and `Decoder` that serializes Swift structures to a flat, untagged binary representation. Note that this usually requires the structures to have a fixed size.
+A simple `Encoder` and `Decoder` that serializes `Codable` Swift types to a flat, untagged binary representation. Note that this usually requires the structures to have a fixed size.
 
 ## Example
 
