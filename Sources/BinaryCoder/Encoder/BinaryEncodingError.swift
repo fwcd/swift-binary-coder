@@ -5,5 +5,6 @@ public enum BinaryEncodingError: Error, Hashable {
     case unsupportedType(String)
     case variableSizedTypeDisallowed
     case recursiveTypeDisallowed
+    case optionalTypeDisallowed
     case valueAfterVariableSizedTypeDisallowed
 }

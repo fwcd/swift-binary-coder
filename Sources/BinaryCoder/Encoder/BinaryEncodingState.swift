@@ -120,7 +120,7 @@ class BinaryEncodingState {
 
     private func beginVariableSizedType() throws {
         let strategy = config.variableSizedTypeStrategy
-        guard strategy != .none else {
+        guard strategy.allowsSingleVariableSizedType else {
             throw BinaryEncodingError.variableSizedTypeDisallowed
         }
         hasVariableSizedType = true
@@ -128,15 +128,23 @@ class BinaryEncodingState {
 
     private func ensureNotAfterVariableSizedType() throws {
         let strategy = config.variableSizedTypeStrategy
-        guard strategy == .untaggedAndAmbiguous || (strategy == .untagged && !hasVariableSizedType) else {
+        guard strategy.allowsValuesAfterVariableSizedTypes
+          || (strategy.allowsSingleVariableSizedType && !hasVariableSizedType) else {
             throw BinaryEncodingError.valueAfterVariableSizedTypeDisallowed
         }
     }
 
     private func ensureNonRecursiveCodingTypePath() throws {
         let strategy = config.variableSizedTypeStrategy
-        guard strategy == .untaggedAndAmbiguous || Set(codingTypePath).count == codingTypePath.count else {
+        guard strategy.allowsRecursiveTypes || Set(codingTypePath).count == codingTypePath.count else {
             throw BinaryEncodingError.recursiveTypeDisallowed
+        }
+    }
+
+    func ensureOptionalAllowed() throws {
+        let strategy = config.variableSizedTypeStrategy
+        guard strategy.allowsOptionalTypes else {
+            throw BinaryEncodingError.optionalTypeDisallowed
         }
     }
 }

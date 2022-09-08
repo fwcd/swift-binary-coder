@@ -12,14 +12,10 @@ final class BinaryEncoderTests: XCTestCase {
             after: 4
         ), to: [0, 0, 0, 2, 120, 0, 0, 0, 0, 0, 0, 0, 4])
 
-        // Recursive types whose values don't contain a recursive instance at runtime are currently allowed
-        // TODO: Figure out how to better deal with optional properties
-        try assertThat(encoder, encodes: Mutual.A(b: .init()), to: [])
-        try assertThat(encoder, encodes: Recursive(value: 1), to: [1])
-
-        // Recursive values are not allowed (unless the strategy is .untaggedAndAmbiguous)
-        try assertThat(encoder, whileEncoding: Recursive(value: 8, recursive: .init(value: 2)), throws: .recursiveTypeDisallowed)
-        try assertThat(encoder, whileEncoding: Mutual.A(b: .init(a: .init())), throws: .recursiveTypeDisallowed)
+        try assertThat(encoder, whileEncoding: Mutual.A(b: .init()), throws: .optionalTypeDisallowed)
+        try assertThat(encoder, whileEncoding: Recursive(value: 1), throws: .optionalTypeDisallowed)
+        try assertThat(encoder, whileEncoding: Recursive(value: 8, recursive: .init(value: 2)), throws: .optionalTypeDisallowed)
+        try assertThat(encoder, whileEncoding: Mutual.A(b: .init(a: .init())), throws: .optionalTypeDisallowed)
     }
 
     func testUntaggedAmbiguousBinaryEncoder() throws {

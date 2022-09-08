@@ -12,4 +12,33 @@ public enum VariableSizedTypeStrategy {
     // E.g. recursive structures could be handled by tagging each
     // struct with a type identifier and arrays with a length. Alternatively,
     // JSON-style beginning/end markers for objects/arrays could be used.
+
+    var allowsRecursiveTypes: Bool {
+        switch self {
+        case .untaggedAndAmbiguous: return true
+        default: return false
+        }
+    }
+
+    var allowsOptionalTypes: Bool {
+        switch self {
+        case .untaggedAndAmbiguous: return true
+        default: return false
+        }
+    }
+
+    var allowsSingleVariableSizedType: Bool {
+        switch self {
+        case .untagged,
+             .untaggedAndAmbiguous: return true
+        default: return false
+        }
+    }
+
+    var allowsValuesAfterVariableSizedTypes: Bool {
+        switch self {
+        case .untaggedAndAmbiguous: return true
+        default: return false
+        }
+    }
 }
