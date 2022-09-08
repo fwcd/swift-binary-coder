@@ -19,7 +19,8 @@ final class BinaryEncoderTests: XCTestCase {
 
         // TODO: Since the synthesized Encodable implementation for enums is externally tagged by key,
         //       we currently get the same result in both cases. For non-.untaggedAndAmbiguous strategies
-        //       we should throw an error.
+        //       should we throw an error, even though there may be a runtime cost to detect whether a
+        //       type is an enum (e.g. through reflection)?
         try assertThat(encoder, encodes: Either<Int, Int>.left(3), to: [0, 0, 0, 0, 0, 0, 0, 3])
         try assertThat(encoder, encodes: Either<Int, Int>.right(3), to: [0, 0, 0, 0, 0, 0, 0, 3])
     }
