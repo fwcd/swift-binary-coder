@@ -58,3 +58,8 @@ struct Generic<Value>: Codable where Value: Codable {
     let value: Value
     let additional: UInt8
 }
+
+enum Either<Left, Right>: Codable where Left: Codable, Right: Codable {
+    case left(Left)
+    case right(Right)
+}

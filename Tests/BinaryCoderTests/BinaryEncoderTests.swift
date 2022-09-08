@@ -16,6 +16,12 @@ final class BinaryEncoderTests: XCTestCase {
         try assertThat(encoder, whileEncoding: Recursive(value: 1), throws: .optionalTypeDisallowed)
         try assertThat(encoder, whileEncoding: Recursive(value: 8, recursive: .init(value: 2)), throws: .optionalTypeDisallowed)
         try assertThat(encoder, whileEncoding: Mutual.A(b: .init(a: .init())), throws: .optionalTypeDisallowed)
+
+        // TODO: Since the synthesized Encodable implementation for enums is externally tagged by key,
+        //       we currently get the same result in both cases. For non-.untaggedAndAmbiguous strategies
+        //       we should throw an error.
+        try assertThat(encoder, encodes: Either<Int, Int>.left(3), to: [0, 0, 0, 0, 0, 0, 0, 3])
+        try assertThat(encoder, encodes: Either<Int, Int>.right(3), to: [0, 0, 0, 0, 0, 0, 0, 3])
     }
 
     func testUntaggedAmbiguousBinaryEncoder() throws {
