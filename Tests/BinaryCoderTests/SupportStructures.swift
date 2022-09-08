@@ -15,10 +15,10 @@ struct Composite: Codable {
 }
 
 class Recursive: Codable {
-    let value: Int64
-    let recursive: Recursive
+    let value: UInt8
+    let recursive: Recursive?
 
-    init(value: Int64, recursive: Recursive) {
+    init(value: UInt8, recursive: Recursive? = nil) {
         self.value = value
         self.recursive = recursive
     }
@@ -35,9 +35,26 @@ enum Mutual {
 
     class B: Codable {
         let a: A?
+        let value: UInt8?
 
-        init(a: A? = nil) {
+        init(a: A? = nil, value: UInt8? = nil) {
             self.a = a
+            self.value = value
         }
     }
+}
+
+struct VariablePrefix: Codable {
+    let prefix: [UInt8]
+    let value: UInt8
+}
+
+struct VariableSuffix: Codable {
+    let value: UInt8
+    let suffix: [UInt8]
+}
+
+struct Generic<Value>: Codable where Value: Codable {
+    let value: Value
+    let additional: UInt8
 }
