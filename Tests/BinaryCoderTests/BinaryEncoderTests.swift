@@ -12,6 +12,9 @@ final class BinaryEncoderTests: XCTestCase {
             after: 4
         ), to: [0, 0, 0, 2, 120, 0, 0, 0, 0, 0, 0, 0, 4])
 
+        try assertThat(encoder, whileEncoding: VariablePrefix(prefix: [1, 2], value: 2), throws: .valueAfterVariableSizedTypeDisallowed)
+        try assertThat(encoder, encodes: VariableSuffix(value: 1, suffix: [9, 7]), to: [1, 9, 7])
+
         try assertThat(encoder, whileEncoding: Mutual.A(b: .init()), throws: .optionalTypeDisallowed)
         try assertThat(encoder, whileEncoding: Recursive(value: 1), throws: .optionalTypeDisallowed)
         try assertThat(encoder, whileEncoding: Recursive(value: 8, recursive: .init(value: 2)), throws: .optionalTypeDisallowed)

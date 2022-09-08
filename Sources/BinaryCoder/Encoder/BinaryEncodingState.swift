@@ -32,14 +32,18 @@ class BinaryEncodingState {
 
     func encode(_ value: String) throws {
         try ensureNotAfterVariableSizedType()
-        try beginVariableSizedType()
+        try ensureVariableSizedTypeAllowed()
+
         guard let encoded = value.data(using: .utf8) else {
             throw BinaryEncodingError.couldNotEncodeString(value)
         }
+
         data += encoded
         if config.nullTerminateStrings {
             data.append(0)
         }
+
+        hasVariableSizedType = true
     }
 
     func encode(_ value: Bool) throws {
@@ -96,18 +100,23 @@ class BinaryEncodingState {
 
     func encode<T>(_ value: T) throws where T: Encodable {
         try ensureNotAfterVariableSizedType()
+
+        let isVariableSizedType = value is [Any] || value is Data
+        if isVariableSizedType {
+            try ensureVariableSizedTypeAllowed()
+        }
+
         switch value {
         case let data as Data:
-            try beginVariableSizedType()
             self.data += data
         default:
-            if value is [Any] {
-                try beginVariableSizedType()
-            }
-
             try withCodingTypePath(appending: [String(describing: type(of: value))]) {
                 try value.encode(to: BinaryEncoderImpl(state: self))
             }
+        }
+
+        if isVariableSizedType {
+            hasVariableSizedType = true
         }
     }
 
@@ -118,12 +127,11 @@ class BinaryEncodingState {
         codingTypePath.removeLast(delta.count)
     }
 
-    private func beginVariableSizedType() throws {
+    private func ensureVariableSizedTypeAllowed() throws {
         let strategy = config.variableSizedTypeStrategy
         guard strategy.allowsSingleVariableSizedType else {
             throw BinaryEncodingError.variableSizedTypeDisallowed
         }
-        hasVariableSizedType = true
     }
 
     private func ensureNotAfterVariableSizedType() throws {
