@@ -31,6 +31,16 @@ final class BinaryDecoderTests: XCTestCase {
         try assertThat(decoder, decodes: [97, 98, 99, 0, 3], to: Generic(value: "abc", additional: 3))
     }
 
+    func testNonNullTerminatedStringBinaryDecoder() throws {
+        let decoder = BinaryDecoder(config: .init(
+            nullTerminateStrings: false
+        ))
+
+        try assertThat(decoder, decodes: [], to: "")
+        try assertThat(decoder, decodes: [97, 98, 99], to: "abc")
+        try assertThat(decoder, whileDecoding: Generic<String>.self, from: [97, 98, 99, 4], throws: .eofTooEarly)
+    }
+
     private func assertThat<Value>(
         _ decoder: BinaryDecoder,
         decodes array: [UInt8],

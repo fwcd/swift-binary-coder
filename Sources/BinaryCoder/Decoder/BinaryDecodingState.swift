@@ -26,14 +26,20 @@ class BinaryDecodingState {
 
     func decode(_ type: String.Type) throws -> String {
         var raw = Data()
-        while true {
-            guard let byte = data.popFirst() else {
-                throw BinaryDecodingError.eofTooEarly
+        if config.nullTerminateStrings {
+            while true {
+                guard let byte = data.popFirst() else {
+                    throw BinaryDecodingError.eofTooEarly
+                }
+                if byte == 0 {
+                    break
+                }
+                raw.append(byte)
             }
-            if byte == 0 {
-                break
+        } else {
+            while let byte = data.popFirst() {
+                raw.append(byte)
             }
-            raw.append(byte)
         }
         guard let value = String(data: raw, encoding: config.stringEncoding) else {
             throw BinaryDecodingError.stringNotDecodable(raw)
