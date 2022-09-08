@@ -27,6 +27,9 @@ class BinaryEncodingState {
             throw BinaryEncodingError.couldNotEncodeString(value)
         }
         data += encoded
+        if config.nullTerminateStrings {
+            data.append(0)
+        }
     }
 
     func encode(_ value: Double) throws {
