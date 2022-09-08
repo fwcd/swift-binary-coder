@@ -81,6 +81,7 @@ class BinaryEncodingState {
     }
 
     func encode<T>(_ value: T) throws where T: Encodable {
-        throw BinaryEncodingError.unsupportedType(value)
+        // TODO: Add special cases for Data etc.
+        try value.encode(to: BinaryEncoderImpl(state: self))
     }
 }
