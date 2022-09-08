@@ -22,6 +22,9 @@ final class BinaryDecoderTests: XCTestCase {
             after: 4
         ))
 
+        // Since the parser doesn't backtrack, it will consume all bytes while reading the array
+        // and then EOF while trying to read the last field.
+        try assertThat(decoder, whileDecoding: VariablePrefix.self, from: [1, 2, 2], throws: .eofTooEarly)
         try assertThat(decoder, decodes: [1, 9, 7], to: VariableSuffix(value: 1, suffix: [9, 7]))
         try assertThat(decoder, decodes: [9, 0, 3, 3, 20], to: Generic(value: Simple(x: 9, y: 3, z: 3), additional: 20))
         try assertThat(decoder, decodes: [97, 98, 99, 0], to: "abc")
