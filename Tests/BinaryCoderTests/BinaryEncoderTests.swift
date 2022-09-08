@@ -5,6 +5,8 @@ final class BinaryEncoderTests: XCTestCase {
     func testDefaultBinaryEncoder() throws {
         let encoder = BinaryEncoder()
 
+        try assertThat(encoder, encodes: UInt8(4), to: [4])
+        try assertThat(encoder, encodes: Int64(9), to: [0, 0, 0, 0, 0, 0, 0, 9])
         try assertThat(encoder, encodes: Simple(x: 1, y: 2, z: 3), to: [1, 0, 2, 3])
         try assertThat(encoder, encodes: Composite(
             before: 2,
@@ -14,6 +16,9 @@ final class BinaryEncoderTests: XCTestCase {
 
         try assertThat(encoder, whileEncoding: VariablePrefix(prefix: [1, 2], value: 2), throws: .valueAfterVariableSizedTypeDisallowed)
         try assertThat(encoder, encodes: VariableSuffix(value: 1, suffix: [9, 7]), to: [1, 9, 7])
+        try assertThat(encoder, encodes: Generic(value: Simple(x: 9, y: 3, z: 3), additional: 20), to: [9, 0, 3, 3, 20])
+        try assertThat(encoder, encodes: "abc", to: [97, 98, 99, 0])
+        try assertThat(encoder, encodes: Generic(value: "abc", additional: 3), to: [97, 98, 99, 0, 3])
 
         try assertThat(encoder, whileEncoding: Mutual.A(b: .init()), throws: .optionalTypeDisallowed)
         try assertThat(encoder, whileEncoding: Recursive(value: 1), throws: .optionalTypeDisallowed)

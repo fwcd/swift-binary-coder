@@ -32,7 +32,11 @@ class BinaryEncodingState {
 
     func encode(_ value: String) throws {
         try ensureNotAfterVariableSizedType()
-        try ensureVariableSizedTypeAllowed()
+
+        let isVariableSizedType = !config.nullTerminateStrings
+        if isVariableSizedType {
+            try ensureVariableSizedTypeAllowed()
+        }
 
         guard let encoded = value.data(using: .utf8) else {
             throw BinaryEncodingError.couldNotEncodeString(value)
@@ -43,7 +47,9 @@ class BinaryEncodingState {
             data.append(0)
         }
 
-        hasVariableSizedType = true
+        if isVariableSizedType {
+            hasVariableSizedType = true
+        }
     }
 
     func encode(_ value: Bool) throws {
