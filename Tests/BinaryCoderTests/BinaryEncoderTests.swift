@@ -5,37 +5,21 @@ final class BinaryEncoderTests: XCTestCase {
     func testDefaultBinaryEncoder() throws {
         let encoder = BinaryEncoder()
 
-        XCTAssertEqual(
-            Array(try encoder.encode(Simple(x: 1, y: 2, z: 3))),
-            [1, 0, 2, 3]
-        )
-        XCTAssertEqual(
-            Array(try encoder.encode(Composite(
-                before: 2,
-                inner: .init(value: 120),
-                after: 4
-            ))),
-            [0, 0, 0, 2, 120, 0, 0, 0, 0, 0, 0, 0, 4]
-        )
+        try assertThat(encoder, encodes: Simple(x: 1, y: 2, z: 3), to: [1, 0, 2, 3])
+        try assertThat(encoder, encodes: Composite(
+            before: 2,
+            inner: .init(value: 120),
+            after: 4
+        ), to: [0, 0, 0, 2, 120, 0, 0, 0, 0, 0, 0, 0, 4])
 
         // Recursive types whose values don't contain a recursive instance at runtime are currently allowed
         // TODO: Figure out how to better deal with optional properties
-        XCTAssertEqual(
-            Array(try encoder.encode(Mutual.A(b: .init()))),
-            []
-        )
-        XCTAssertEqual(
-            Array(try encoder.encode(Recursive(value: 1))),
-            [1]
-        )
+        try assertThat(encoder, encodes: Mutual.A(b: .init()), to: [])
+        try assertThat(encoder, encodes: Recursive(value: 1), to: [1])
 
         // Recursive values are not allowed (unless the strategy is .untaggedAndAmbiguous)
-        XCTAssertThrowsError(try encoder.encode(Recursive(value: 8, recursive: .init(value: 2)))) { error in
-            XCTAssertEqual(error as! BinaryEncodingError, BinaryEncodingError.recursiveTypeDisallowed)
-        }
-        XCTAssertThrowsError(try encoder.encode(Mutual.A(b: .init(a: .init())))) { error in
-            XCTAssertEqual(error as! BinaryEncodingError, BinaryEncodingError.recursiveTypeDisallowed)
-        }
+        try assertThat(encoder, whileEncoding: Recursive(value: 8, recursive: .init(value: 2)), throws: .recursiveTypeDisallowed)
+        try assertThat(encoder, whileEncoding: Mutual.A(b: .init(a: .init())), throws: .recursiveTypeDisallowed)
     }
 
     func testUntaggedAmbiguousBinaryEncoder() throws {
@@ -43,9 +27,26 @@ final class BinaryEncoderTests: XCTestCase {
             variableSizedTypeStrategy: .untaggedAndAmbiguous
         ))
 
-        XCTAssertEqual(
-            Array(try encoder.encode(Mutual.A(b: .init(a: .init(b: .init(value: 4)), value: 2)))),
-            [4, 2]
-        )
+        try assertThat(encoder, encodes: Mutual.A(b: .init(a: .init(b: .init(value: 4)), value: 2)), to: [4, 2])
+    }
+
+    private func assertThat<Value>(
+        _ encoder: BinaryEncoder,
+        encodes value: Value,
+        to expectedArray: [UInt8],
+        line: UInt = #line
+    ) throws where Value: Encodable {
+        XCTAssertEqual(Array(try encoder.encode(value)), expectedArray, line: line)
+    }
+
+    private func assertThat<Value>(
+        _ encoder: BinaryEncoder,
+        whileEncoding value: Value,
+        throws expectedError: BinaryEncodingError,
+        line: UInt = #line
+    ) throws where Value: Encodable {
+        XCTAssertThrowsError(try encoder.encode(value), line: line) { error in
+            XCTAssertEqual(error as! BinaryEncodingError, expectedError, line: line)
+        }
     }
 }
