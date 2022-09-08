@@ -41,6 +41,16 @@ final class BinaryEncoderTests: XCTestCase {
         try assertThat(encoder, encodes: Either<Int, Int>.right(3), to: [0, 0, 0, 0, 0, 0, 0, 3])
     }
 
+    func testNonNullTerminatedStringBinaryEncoder() throws {
+        let encoder = BinaryEncoder(config: .init(
+            nullTerminateStrings: false
+        ))
+
+        try assertThat(encoder, encodes: "", to: [])
+        try assertThat(encoder, encodes: "abc", to: [97, 98, 99])
+        try assertThat(encoder, whileEncoding: Generic(value: "abc", additional: 7), throws: .valueAfterVariableSizedTypeDisallowed)
+    }
+
     func testUntaggedAmbiguousBinaryEncoder() throws {
         let encoder = BinaryEncoder(config: .init(
             variableSizedTypeStrategy: .untaggedAndAmbiguous
