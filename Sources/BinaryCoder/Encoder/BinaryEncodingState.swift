@@ -20,7 +20,7 @@ class BinaryEncodingState {
     }
 
     func encodeNil() throws {
-        throw BinaryEncodingError.couldNotEncodeNil
+        throw BinaryEncodingError.nilNotEncodable
     }
 
     func encodeInteger<Integer>(_ value: Integer) throws where Integer: FixedWidthInteger {
@@ -39,7 +39,7 @@ class BinaryEncodingState {
         }
 
         guard let encoded = value.data(using: .utf8) else {
-            throw BinaryEncodingError.couldNotEncodeString(value)
+            throw BinaryEncodingError.stringNotEncodable(value)
         }
 
         data += encoded

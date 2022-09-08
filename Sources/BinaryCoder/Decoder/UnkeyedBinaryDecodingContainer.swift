@@ -114,8 +114,8 @@ struct UnkeyedBinaryDecodingContainer: UnkeyedDecodingContainer {
         return value
     }
 
-    mutating func decode<T>(_ type: T.Type) throws -> T where T : Decodable {
-        let value = try state.decode(type)
+    mutating func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
+        let value = try state.decode(type, codingPath: codingPath)
         currentIndex += 1
         return value
     }

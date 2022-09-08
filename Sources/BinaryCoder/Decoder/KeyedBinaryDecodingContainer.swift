@@ -60,5 +60,5 @@ struct KeyedBinaryDecodingContainer<Key>: KeyedDecodingContainerProtocol where K
 
     func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 { try state.decode(type) }
 
-    func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable { try state.decode(type) }
+    func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable { try state.decode(type, codingPath: codingPath + [key]) }
 }
