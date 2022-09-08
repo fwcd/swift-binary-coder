@@ -11,7 +11,7 @@ class BinaryEncodingState {
     }
 
     func encodeNil() throws {
-        // Skip nils
+        throw BinaryEncodingError.couldNotEncodeNil
     }
 
     func encodeInteger<Integer>(_ value: Integer) where Integer: FixedWidthInteger {
