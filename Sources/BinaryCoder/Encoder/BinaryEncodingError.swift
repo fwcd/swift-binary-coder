@@ -4,5 +4,6 @@ public enum BinaryEncodingError: Error {
     case couldNotEncodeString(String)
     case unsupportedType(Any)
     case variableSizedTypeDisallowed
+    case recursiveTypeDisallowed
     case valueAfterVariableSizedTypeDisallowed
 }

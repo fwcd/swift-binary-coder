@@ -4,7 +4,15 @@ import Foundation
 class BinaryEncodingState {
     private let config: BinaryCodingConfiguration
     private(set) var data: Data = Data()
+
+    /// Whether the encoder has already encountered a variable-sized type.
+    /// Depending on the strategy, types after variable-sized types may be
+    /// disallowed.
     private var hasVariableSizedType: Bool = false
+    /// The current coding path on the type level. Used to detect cycles
+    /// (i.e. recursive or mutually recursive types), which are essentially
+    /// recursive types.
+    private var codingTypePath: [String] = []
 
     init(config: BinaryCodingConfiguration, data: Data = .init()) {
         self.config = config
@@ -96,8 +104,18 @@ class BinaryEncodingState {
             if value is [Any] {
                 try beginVariableSizedType()
             }
-            try value.encode(to: BinaryEncoderImpl(state: self))
+
+            try withCodingTypePath(appending: [String(describing: type(of: value))]) {
+                try value.encode(to: BinaryEncoderImpl(state: self))
+            }
         }
+    }
+
+    private func withCodingTypePath(appending delta: [String], action: () throws -> Void) throws {
+        codingTypePath += delta
+        try ensureNonRecursiveCodingTypePath()
+        try action()
+        codingTypePath.removeLast(delta.count)
     }
 
     private func beginVariableSizedType() throws {
@@ -112,6 +130,13 @@ class BinaryEncodingState {
         let strategy = config.variableSizedTypeStrategy
         guard strategy == .untaggedAndAmbiguous || (strategy == .untagged && !hasVariableSizedType) else {
             throw BinaryEncodingError.valueAfterVariableSizedTypeDisallowed
+        }
+    }
+
+    private func ensureNonRecursiveCodingTypePath() throws {
+        let strategy = config.variableSizedTypeStrategy
+        guard strategy == .untaggedAndAmbiguous || Set(codingTypePath).count == codingTypePath.count else {
+            throw BinaryEncodingError.recursiveTypeDisallowed
         }
     }
 }

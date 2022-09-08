@@ -8,5 +8,8 @@ public enum VariableSizedTypeStrategy {
     /// however make decoding (with this library) impossible.
     case untaggedAndAmbiguous
 
-    // TODO: Tagged strategy
+    // TODO: Investigate how a tagged strategy could be implemented.
+    // E.g. recursive structures could be handled by tagging each
+    // struct with a type identifier and arrays with a length. Alternatively,
+    // JSON-style beginning/end markers for objects/arrays could be used.
 }
