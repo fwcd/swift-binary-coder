@@ -2,17 +2,19 @@ import XCTest
 @testable import BinaryCoder
 
 final class BinaryEncoderTests: XCTestCase {
-    struct X: Encodable {
-        let x: UInt8
-        let y: UInt16
-        let z: Int8
-    }
-
     func testBinaryEncoder() throws {
         let encoder = BinaryEncoder()
         XCTAssertEqual(
-            Array(try encoder.encode(X(x: 1, y: 2, z: 3))),
+            Array(try encoder.encode(Simple(x: 1, y: 2, z: 3))),
             [1, 0, 2, 3]
+        )
+        XCTAssertEqual(
+            Array(try encoder.encode(Composite(
+                before: 2,
+                inner: .init(value: 120),
+                after: 4
+            ))),
+            [0, 0, 0, 2, 120, 0, 0, 0, 0, 0, 0, 0, 4]
         )
     }
 }
