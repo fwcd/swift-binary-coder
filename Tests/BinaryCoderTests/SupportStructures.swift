@@ -23,3 +23,21 @@ class Recursive: Codable {
         self.recursive = recursive
     }
 }
+
+enum Mutual {
+    class A: Codable {
+        let b: B?
+
+        init(b: B? = nil) {
+            self.b = b
+        }
+    }
+
+    class B: Codable {
+        let a: A?
+
+        init(a: A? = nil) {
+            self.a = a
+        }
+    }
+}
