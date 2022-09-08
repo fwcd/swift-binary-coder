@@ -11,6 +11,6 @@ public struct BinaryDecoder {
     /// Decodes a value from a flat binary representation.
     public func decode<Value>(_ type: Value.Type, from data: Data) throws -> Value where Value: Decodable {
         let state = BinaryDecodingState(config: config, data: data)
-        return try Value(from: BinaryDecoderImpl(state: state))
+        return try Value(from: BinaryDecoderImpl(state: state, codingPath: []))
     }
 }

@@ -97,7 +97,7 @@ struct UnkeyedBinaryEncodingContainer: UnkeyedEncodingContainer {
     }
 
     mutating func encode<T>(_ value: T) throws where T: Encodable {
-        try state.encode(value)
+        try state.encode(value, codingPath: codingPath)
         count += 1
     }
 }

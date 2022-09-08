@@ -11,7 +11,7 @@ public struct BinaryEncoder {
     /// Encodes a value to a flat binary representation.
     public func encode<Value>(_ value: Value) throws -> Data where Value: Encodable {
         let state = BinaryEncodingState(config: config)
-        try state.encode(value)
+        try state.encode(value, codingPath: [])
         return state.data
     }
 }

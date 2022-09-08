@@ -157,7 +157,7 @@ struct KeyedBinaryEncodingContainer<Key>: KeyedEncodingContainerProtocol where K
     mutating func encodeIfPresent<T>(_ value: T?, forKey key: Key) throws where T : Encodable {
         try state.ensureOptionalAllowed()
         if let value = value {
-            try state.encode(value)
+            try state.encode(value, codingPath: codingPath + [key])
         }
     }
 }
