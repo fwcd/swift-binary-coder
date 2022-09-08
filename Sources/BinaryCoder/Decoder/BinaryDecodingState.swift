@@ -40,12 +40,12 @@ class BinaryDecodingState {
     }
 
     func decodeInteger<Integer>(_ type: Integer.Type) throws -> Integer where Integer: FixedWidthInteger {
-        let bitWidth = Integer.bitWidth
-        let raw = data.prefix(bitWidth)
+        let byteWidth = Integer.bitWidth / 8
+        let raw = data.prefix(byteWidth)
         let value = raw.withUnsafeBytes {
             config.endianness.assume($0.load(as: type))
         }
-        data.removeFirst(bitWidth)
+        data.removeFirst(byteWidth)
         return value
     }
 
