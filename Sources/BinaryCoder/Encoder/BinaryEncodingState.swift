@@ -4,6 +4,7 @@ import Foundation
 class BinaryEncodingState {
     private let config: BinaryCodingConfiguration
     private(set) var data: Data = Data()
+    private var hasVariableSizedType: Bool = false
 
     init(config: BinaryCodingConfiguration, data: Data = .init()) {
         self.config = config
@@ -14,15 +15,16 @@ class BinaryEncodingState {
         throw BinaryEncodingError.couldNotEncodeNil
     }
 
-    func encodeInteger<Integer>(_ value: Integer) where Integer: FixedWidthInteger {
-        withUnsafeBytes(of: config.endianness.apply(value)) { data += $0 }
-    }
-
-    func encode(_ value: Bool) throws {
-        encodeInteger(value ? 1 as UInt8 : 0)
+    func encodeInteger<Integer>(_ value: Integer) throws where Integer: FixedWidthInteger {
+        try ensureNotAfterVariableSizedType()
+        withUnsafeBytes(of: config.endianness.apply(value)) {
+            data += $0
+        }
     }
 
     func encode(_ value: String) throws {
+        try ensureNotAfterVariableSizedType()
+        try beginVariableSizedType()
         guard let encoded = value.data(using: .utf8) else {
             throw BinaryEncodingError.couldNotEncodeString(value)
         }
@@ -32,56 +34,84 @@ class BinaryEncodingState {
         }
     }
 
+    func encode(_ value: Bool) throws {
+        try encodeInteger(value ? 1 as UInt8 : 0)
+    }
+
     func encode(_ value: Double) throws {
-        encodeInteger(value.bitPattern)
+        try encodeInteger(value.bitPattern)
     }
 
     func encode(_ value: Float) throws {
-        encodeInteger(value.bitPattern)
+        try encodeInteger(value.bitPattern)
     }
 
     func encode(_ value: Int) throws {
-        encodeInteger(value)
+        try encodeInteger(value)
     }
 
     func encode(_ value: Int8) throws {
-        encodeInteger(value)
+        try encodeInteger(value)
     }
 
     func encode(_ value: Int16) throws {
-        encodeInteger(value)
+        try encodeInteger(value)
     }
 
     func encode(_ value: Int32) throws {
-        encodeInteger(value)
+        try encodeInteger(value)
     }
 
     func encode(_ value: Int64) throws {
-        encodeInteger(value)
+        try encodeInteger(value)
     }
 
     func encode(_ value: UInt) throws {
-        encodeInteger(value)
+        try encodeInteger(value)
     }
 
     func encode(_ value: UInt8) throws {
-        encodeInteger(value)
+        try encodeInteger(value)
     }
 
     func encode(_ value: UInt16) throws {
-        encodeInteger(value)
+        try encodeInteger(value)
     }
 
     func encode(_ value: UInt32) throws {
-        encodeInteger(value)
+        try encodeInteger(value)
     }
 
     func encode(_ value: UInt64) throws {
-        encodeInteger(value)
+        try encodeInteger(value)
     }
 
     func encode<T>(_ value: T) throws where T: Encodable {
-        // TODO: Add special cases for Data etc.
-        try value.encode(to: BinaryEncoderImpl(state: self))
+        try ensureNotAfterVariableSizedType()
+        switch value {
+        case let data as Data:
+            try beginVariableSizedType()
+            self.data += data
+        default:
+            if value is [Any] {
+                try beginVariableSizedType()
+            }
+            try value.encode(to: BinaryEncoderImpl(state: self))
+        }
+    }
+
+    private func beginVariableSizedType() throws {
+        let strategy = config.variableSizedTypeStrategy
+        guard strategy != .none else {
+            throw BinaryEncodingError.variableSizedTypeDisallowed
+        }
+        hasVariableSizedType = true
+    }
+
+    private func ensureNotAfterVariableSizedType() throws {
+        let strategy = config.variableSizedTypeStrategy
+        guard strategy == .untaggedAndAmbiguous || (strategy == .untagged && !hasVariableSizedType) else {
+            throw BinaryEncodingError.valueAfterVariableSizedTypeDisallowed
+        }
     }
 }
