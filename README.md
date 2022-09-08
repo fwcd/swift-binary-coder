@@ -16,4 +16,8 @@ struct Point: Codable {
 let encoder = BinaryEncoder()
 try encoder.encode(Point(x: 2, y: 3))
 // -> Data([0, 2, 0, 3])
+
+let decoder = BinaryDecoder()
+try decoder.decode(Point.self, from: Data([0, 2, 0, 3]))
+// -> Point(x: 2, y: 3)
 ```
