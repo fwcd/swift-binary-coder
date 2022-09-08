@@ -5,6 +5,8 @@ class BinaryDecodingState {
     private let config: BinaryCodingConfiguration
     private var data: Data
 
+    var isAtEnd: Bool { data.isEmpty }
+
     init(config: BinaryCodingConfiguration, data: Data) {
         self.config = config
         self.data = data
@@ -41,7 +43,12 @@ class BinaryDecodingState {
 
     func decodeInteger<Integer>(_ type: Integer.Type) throws -> Integer where Integer: FixedWidthInteger {
         let byteWidth = Integer.bitWidth / 8
-        let raw = data.prefix(byteWidth)
+        // TODO: Swift 5.7's `loadUnaligned` should make the `Array` redundant
+        // See https://github.com/apple/swift-evolution/blob/main/proposals/0349-unaligned-loads-and-stores.md
+        let raw = Array(data.prefix(byteWidth))
+        guard raw.count == byteWidth else {
+            throw BinaryDecodingError.eofTooEarly
+        }
         let value = raw.withUnsafeBytes {
             config.endianness.assume($0.load(as: type))
         }
