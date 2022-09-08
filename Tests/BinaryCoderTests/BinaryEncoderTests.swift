@@ -6,7 +6,15 @@ final class BinaryEncoderTests: XCTestCase {
         let encoder = BinaryEncoder()
 
         try assertThat(encoder, encodes: UInt8(4), to: [4])
-        try assertThat(encoder, encodes: Int64(9), to: [0, 0, 0, 0, 0, 0, 0, 9])
+        try assertThat(encoder, encodes: UInt16(4), to: [0, 4])
+        try assertThat(encoder, encodes: UInt32(4), to: [0, 0, 0, 4])
+        try assertThat(encoder, encodes: UInt64(4), to: [0, 0, 0, 0, 0, 0, 0, 4])
+        try assertThat(encoder, encodes: Int8(-1), to: [255])
+        try assertThat(encoder, encodes: Int8(4), to: [4])
+        try assertThat(encoder, encodes: Int16(4), to: [0, 4])
+        try assertThat(encoder, encodes: Int32(4), to: [0, 0, 0, 4])
+        try assertThat(encoder, encodes: Int64(4), to: [0, 0, 0, 0, 0, 0, 0, 4])
+
         try assertThat(encoder, encodes: Simple(x: 1, y: 2, z: 3), to: [1, 0, 2, 3])
         try assertThat(encoder, encodes: Composite(
             before: 2,
