@@ -1,10 +1,11 @@
 struct SingleValueBinaryEncodingContainer: SingleValueEncodingContainer {
     private let state: BinaryEncodingState
 
-    var codingPath: [CodingKey] { [] }
+    let codingPath: [CodingKey]
 
-    init(state: BinaryEncodingState) {
+    init(state: BinaryEncodingState, codingPath: [CodingKey]) {
         self.state = state
+        self.codingPath = codingPath
     }
 
     mutating func encodeNil() throws { try state.encodeNil() }

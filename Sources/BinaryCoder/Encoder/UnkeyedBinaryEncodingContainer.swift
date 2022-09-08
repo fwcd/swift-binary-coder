@@ -2,22 +2,23 @@ struct UnkeyedBinaryEncodingContainer: UnkeyedEncodingContainer {
     private let state: BinaryEncodingState
     private(set) var count: Int = 0
 
-    var codingPath: [CodingKey] { [] }
+    let codingPath: [CodingKey]
 
-    init(state: BinaryEncodingState) {
+    init(state: BinaryEncodingState, codingPath: [CodingKey]) {
         self.state = state
+        self.codingPath = codingPath
     }
 
     mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey: CodingKey {
-        .init(KeyedBinaryEncodingContainer<NestedKey>(state: state))
+        .init(KeyedBinaryEncodingContainer<NestedKey>(state: state, codingPath: codingPath))
     }
 
     mutating func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
-        UnkeyedBinaryEncodingContainer(state: state)
+        UnkeyedBinaryEncodingContainer(state: state, codingPath: codingPath)
     }
 
     mutating func superEncoder() -> Encoder {
-        BinaryEncoderImpl(state: state)
+        BinaryEncoderImpl(state: state, codingPath: codingPath)
     }
 
     mutating func encodeNil() throws {
