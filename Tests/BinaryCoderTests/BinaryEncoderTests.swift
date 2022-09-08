@@ -23,6 +23,8 @@ final class BinaryEncoderTests: XCTestCase {
             variableSizedTypeStrategy: .untaggedAndAmbiguous
         ))
 
+        try assertThat(encoder, encodes: Recursive(value: 1), to: [1])
+        try assertThat(encoder, encodes: Recursive(value: 3, recursive: .init(value: 4)), to: [3, 4])
         try assertThat(encoder, encodes: Mutual.A(b: .init(a: .init(b: .init(value: 4)), value: 2)), to: [4, 2])
     }
 
