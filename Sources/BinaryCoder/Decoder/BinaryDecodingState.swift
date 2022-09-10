@@ -112,7 +112,22 @@ class BinaryDecodingState {
 
     func decode<T>(_ type: T.Type, codingPath: [CodingKey]) throws -> T where T: Decodable {
         // TODO: Decode Data too
-        switch type {
+        switch Metatype(type) {
+        case .apply("BinaryCoder.FixedSizeArray", let args):
+            func parseCount(metatype: Metatype) throws -> Int {
+                switch metatype {
+                case .base("TypeLevelZero"):
+                    return TypeLevelZero.value
+                case .apply("TypeLevelOneBit", let args):
+                    return try parseCount(metatype: args[0]) << 1 | 1
+                case .apply("TypeLevelZeroBit", let args):
+                    return try parseCount(metatype: args[0]) << 1 | 0
+                default:
+                    throw BinaryDecodingError.invalidGenericArgument("Unknown TypeLevelInt")
+                }
+            }
+            let count = try parseCount(metatype: args[0])
+            // TODO
         default:
             return try T(from: BinaryDecoderImpl(state: self, codingPath: codingPath))
         }

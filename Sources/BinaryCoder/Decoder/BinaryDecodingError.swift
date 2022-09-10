@@ -4,4 +4,5 @@ import Foundation
 public enum BinaryDecodingError: Error, Hashable {
     case eofTooEarly
     case stringNotDecodable(Data)
+    case invalidGenericArgument(String)
 }
