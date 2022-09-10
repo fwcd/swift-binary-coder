@@ -11,7 +11,7 @@ enum Metatype: Hashable {
     }
 
     init?(_ type: Any.Type) {
-        self.init(parsing: String(describing: type))
+        self.init(parsing: String(reflecting: type))
     }
 }
 
