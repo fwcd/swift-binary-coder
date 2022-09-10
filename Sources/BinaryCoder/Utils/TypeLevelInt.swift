@@ -22,6 +22,6 @@ public struct TypeLevelZeroBit<Tail>: TypeLevelInt where Tail: TypeLevelInt {
 }
 
 extension TypeLevelInt {
-    typealias I = TypeLevelOneBit<Self>;
-    typealias O = TypeLevelZeroBit<Self>;
+    public typealias I = TypeLevelOneBit<Self>;
+    public typealias O = TypeLevelZeroBit<Self>;
 }

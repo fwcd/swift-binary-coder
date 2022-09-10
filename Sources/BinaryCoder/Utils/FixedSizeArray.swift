@@ -1,15 +1,15 @@
 /// An array with a statically known length whose length is enforced at runtime.
-public struct FixedLengthArray<Value, Length>: Sequence where Length: TypeLevelInt {
-    let values: [Value]
+public struct FixedSizeArray<Count, Value>: Sequence where Count: TypeLevelInt {
+    public let values: [Value]
 
-    var count: Int { values.count }
+    public static var count: Int { Count.value }
 
     public init(repeating value: Value) {
-        values = Array(repeating: value, count: Length.value)
+        values = Array(repeating: value, count: Count.value)
     }
 
     public init?(_ values: [Value]) {
-        guard values.count == Length.value else { return nil }
+        guard values.count == Count.value else { return nil }
         self.values = values
     }
 
@@ -18,7 +18,7 @@ public struct FixedLengthArray<Value, Length>: Sequence where Length: TypeLevelI
     }
 }
 
-extension FixedLengthArray where Value: AdditiveArithmetic {
+extension FixedSizeArray where Value: AdditiveArithmetic {
     public init() {
         self.init(repeating: .zero)
     }

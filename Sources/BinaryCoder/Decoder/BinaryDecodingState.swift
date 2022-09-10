@@ -111,6 +111,10 @@ class BinaryDecodingState {
     }
 
     func decode<T>(_ type: T.Type, codingPath: [CodingKey]) throws -> T where T: Decodable {
-        try T(from: BinaryDecoderImpl(state: self, codingPath: codingPath))
+        // TODO: Decode Data too
+        switch type {
+        default:
+            return try T(from: BinaryDecoderImpl(state: self, codingPath: codingPath))
+        }
     }
 }
