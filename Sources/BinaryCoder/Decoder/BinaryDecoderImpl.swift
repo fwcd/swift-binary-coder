@@ -18,7 +18,7 @@ struct BinaryDecoderImpl: Decoder {
         UnkeyedBinaryDecodingContainer(state: state, codingPath: codingPath)
     }
 
-    func singleValueContainer() throws -> SingleValueDecodingContainer {
+    func singleValueContainer() throws -> any SingleValueDecodingContainer {
         SingleValueBinaryDecodingContainer(state: state, codingPath: codingPath)
     }
 }

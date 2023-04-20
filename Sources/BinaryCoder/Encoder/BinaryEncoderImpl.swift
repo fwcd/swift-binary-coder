@@ -18,7 +18,7 @@ struct BinaryEncoderImpl: Encoder {
         UnkeyedBinaryEncodingContainer(state: state, codingPath: codingPath)
     }
 
-    func singleValueContainer() -> SingleValueEncodingContainer {
+    func singleValueContainer() -> any SingleValueEncodingContainer {
         SingleValueBinaryEncodingContainer(state: state, codingPath: codingPath)
     }
 }
