@@ -18,15 +18,15 @@ struct KeyedBinaryDecodingContainer<Key>: KeyedDecodingContainerProtocol where K
         .init(KeyedBinaryDecodingContainer<NestedKey>(state: state, codingPath: codingPath + [key]))
     }
 
-    func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
+    func nestedUnkeyedContainer(forKey key: Key) throws -> any UnkeyedDecodingContainer {
         UnkeyedBinaryDecodingContainer(state: state, codingPath: codingPath)
     }
 
-    func superDecoder() throws -> Decoder {
+    func superDecoder() throws -> any Decoder {
         BinaryDecoderImpl(state: state, codingPath: codingPath)
     }
 
-    func superDecoder(forKey key: Key) throws -> Decoder {
+    func superDecoder(forKey key: Key) throws -> any Decoder {
         BinaryDecoderImpl(state: state, codingPath: codingPath)
     }
 

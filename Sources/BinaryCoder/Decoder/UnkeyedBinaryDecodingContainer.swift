@@ -16,11 +16,11 @@ struct UnkeyedBinaryDecodingContainer: UnkeyedDecodingContainer {
         .init(KeyedBinaryDecodingContainer<NestedKey>(state: state, codingPath: codingPath))
     }
 
-    mutating func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer {
+    mutating func nestedUnkeyedContainer() throws -> any UnkeyedDecodingContainer {
         UnkeyedBinaryDecodingContainer(state: state, codingPath: codingPath)
     }
 
-    mutating func superDecoder() throws -> Decoder {
+    mutating func superDecoder() throws -> any Decoder {
         BinaryDecoderImpl(state: state, codingPath: codingPath)
     }
 

@@ -12,7 +12,7 @@ struct KeyedBinaryEncodingContainer<Key>: KeyedEncodingContainerProtocol where K
         .init(KeyedBinaryEncodingContainer<NestedKey>(state: state, codingPath: codingPath + [key]))
     }
 
-    mutating func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
+    mutating func nestedUnkeyedContainer(forKey key: Key) -> any UnkeyedEncodingContainer {
         UnkeyedBinaryEncodingContainer(state: state, codingPath: codingPath + [key])
     }
 

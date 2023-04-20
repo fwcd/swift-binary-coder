@@ -14,7 +14,7 @@ struct BinaryDecoderImpl: Decoder {
         .init(KeyedBinaryDecodingContainer(state: state, codingPath: codingPath))
     }
 
-    func unkeyedContainer() throws -> UnkeyedDecodingContainer {
+    func unkeyedContainer() throws -> any UnkeyedDecodingContainer {
         UnkeyedBinaryDecodingContainer(state: state, codingPath: codingPath)
     }
 

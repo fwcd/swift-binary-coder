@@ -13,7 +13,7 @@ struct UnkeyedBinaryEncodingContainer: UnkeyedEncodingContainer {
         .init(KeyedBinaryEncodingContainer<NestedKey>(state: state, codingPath: codingPath))
     }
 
-    mutating func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
+    mutating func nestedUnkeyedContainer() -> any UnkeyedEncodingContainer {
         UnkeyedBinaryEncodingContainer(state: state, codingPath: codingPath)
     }
 

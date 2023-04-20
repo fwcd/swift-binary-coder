@@ -14,7 +14,7 @@ struct BinaryEncoderImpl: Encoder {
         .init(KeyedBinaryEncodingContainer(state: state, codingPath: codingPath))
     }
 
-    func unkeyedContainer() -> UnkeyedEncodingContainer {
+    func unkeyedContainer() -> any UnkeyedEncodingContainer {
         UnkeyedBinaryEncodingContainer(state: state, codingPath: codingPath)
     }
 
