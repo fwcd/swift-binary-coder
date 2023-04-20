@@ -110,7 +110,7 @@ class BinaryDecodingState {
         try decodeInteger(type)
     }
 
-    func decode<T>(_ type: T.Type, codingPath: [CodingKey]) throws -> T where T: Decodable {
+    func decode<T>(_ type: T.Type, codingPath: [any CodingKey]) throws -> T where T: Decodable {
         try T(from: BinaryDecoderImpl(state: self, codingPath: codingPath))
     }
 }

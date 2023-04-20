@@ -2,10 +2,10 @@
 struct BinaryDecoderImpl: Decoder {
     private let state: BinaryDecodingState
 
-    let codingPath: [CodingKey]
+    let codingPath: [any CodingKey]
     var userInfo: [CodingUserInfoKey: Any] { [:] }
 
-    init(state: BinaryDecodingState, codingPath: [CodingKey]) {
+    init(state: BinaryDecodingState, codingPath: [any CodingKey]) {
         self.state = state
         self.codingPath = codingPath
     }

@@ -1,13 +1,13 @@
 struct UnkeyedBinaryDecodingContainer: UnkeyedDecodingContainer {
     private let state: BinaryDecodingState
-    let codingPath: [CodingKey]
+    let codingPath: [any CodingKey]
 
     private(set) var currentIndex: Int = 0
 
     var isAtEnd: Bool { state.isAtEnd }
     var count: Int? { nil }
 
-    init(state: BinaryDecodingState, codingPath: [CodingKey]) {
+    init(state: BinaryDecodingState, codingPath: [any CodingKey]) {
         self.state = state
         self.codingPath = codingPath
     }

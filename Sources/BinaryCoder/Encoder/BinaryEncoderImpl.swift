@@ -2,10 +2,10 @@
 struct BinaryEncoderImpl: Encoder {
     private let state: BinaryEncodingState
 
-    let codingPath: [CodingKey]
+    let codingPath: [any CodingKey]
     var userInfo: [CodingUserInfoKey: Any] { [:] }
 
-    init(state: BinaryEncodingState, codingPath: [CodingKey]) {
+    init(state: BinaryEncodingState, codingPath: [any CodingKey]) {
         self.state = state
         self.codingPath = codingPath
     }

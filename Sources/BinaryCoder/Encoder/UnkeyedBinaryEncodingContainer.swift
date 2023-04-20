@@ -2,9 +2,9 @@ struct UnkeyedBinaryEncodingContainer: UnkeyedEncodingContainer {
     private let state: BinaryEncodingState
     private(set) var count: Int = 0
 
-    let codingPath: [CodingKey]
+    let codingPath: [any CodingKey]
 
-    init(state: BinaryEncodingState, codingPath: [CodingKey]) {
+    init(state: BinaryEncodingState, codingPath: [any CodingKey]) {
         self.state = state
         self.codingPath = codingPath
     }

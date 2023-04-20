@@ -104,7 +104,7 @@ class BinaryEncodingState {
         try encodeInteger(value)
     }
 
-    func encode<T>(_ value: T, codingPath: [CodingKey]) throws where T: Encodable {
+    func encode<T>(_ value: T, codingPath: [any CodingKey]) throws where T: Encodable {
         try ensureNotAfterVariableSizedType()
 
         let isVariableSizedType = value is [Any] || value is Data
